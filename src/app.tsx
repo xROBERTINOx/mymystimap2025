@@ -30,9 +30,8 @@ function App() {
     );
   }
   
-  
 
-return (
+  return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       <APIProvider apiKey={'AIzaSyAU_XhSbMMas1jeY3kF_xuttKnIf1v7P_U'}>
         <h2>Route from Hunt Library to Engineering Building II</h2>
@@ -54,7 +53,6 @@ return (
       </APIProvider>
     </div>
   );
-  
   
 }
 
@@ -181,12 +179,9 @@ function UserLocationMarker() {
           accuracyCircleRef.current.setRadius(accuracy);
         }
 
-        // Center map only on initial position or if explicitly requested
-        if (isInitialPosition) {
-          map.setCenter(userPosition);
-          map.setZoom(20);
-          setIsInitialPosition(false);
-        }
+        // Center map on the user's position every time
+        map.setCenter(userPosition);
+        map.setZoom(20);
       },
       (error) => {
         console.error('Error getting location:', error);
@@ -213,7 +208,7 @@ function UserLocationMarker() {
       }
       navigator.geolocation.clearWatch(watchId);
     };
-  }, [map, isInitialPosition]);
+  }, [map]);
 
   return null;
 }
