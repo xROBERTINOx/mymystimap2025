@@ -5,26 +5,57 @@ import userImageUrl from './proto/userImage.png';
 
 function App() {
   const [isInitialPosition, setIsInitialPosition] = useState(true);
-  
-  return (
-    
-    <APIProvider apiKey={'AIzaSyAU_XhSbMMas1jeY3kF_xuttKnIf1v7P_U'}>
-      <div>
-        <h2>Route from Hunt Library to Engineering Building II</h2>
-      </div>
+  const map = useMap();
 
-      <Map
-        defaultZoom={18}
-        fullscreenControl={false}
-        options={{
-          mapId: '36eeed8517e55638',
-        }}
-      >
-        <Directions />
-        <UserLocationMarker />
-      </Map>
-    </APIProvider>
+  function MapControls() {
+    const map = useMap();
+  
+    const zoomIn = () => {
+      if (map) {
+        map.setZoom(map.getZoom() + 1);
+      }
+    };
+  
+    const zoomOut = () => {
+      if (map) {
+        map.setZoom(map.getZoom() - 1);
+      }
+    };
+  
+    return (
+      <div style={{ padding: '10px', backgroundColor: '#f0f0f0', display: 'flex', gap: '10px' }}>
+        <button onClick={zoomIn}>Zoom In</button>
+        <button onClick={zoomOut}>Zoom Out</button>
+      </div>
+    );
+  }
+  
+  
+
+return (
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+      <APIProvider apiKey={'AIzaSyAU_XhSbMMas1jeY3kF_xuttKnIf1v7P_U'}>
+        <h2>Route from Hunt Library to Engineering Building II</h2>
+  
+        <div style={{ flex: 1, position: 'relative' }}>
+          <Map
+            defaultZoom={18}
+            fullscreenControl={false}
+            options={{
+              mapId: '36eeed8517e55638',
+            }}
+          >
+            <Directions />
+            <UserLocationMarker />
+          </Map>
+        </div>
+  
+        <MapControls />
+      </APIProvider>
+    </div>
   );
+  
+  
 }
 
 // Directions component remains the same...
