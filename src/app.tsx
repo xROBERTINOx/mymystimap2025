@@ -5,7 +5,40 @@ import userImageUrl from './proto/userImage.png';
 
 function App() {
   const [isInitialPosition, setIsInitialPosition] = useState(true);
+  const [mapHeading, setMapHeading] = useState(0);
   const map = useMap();
+  const mapRef = useRef<google.maps.Map | null>(null);
+
+  useEffect(() => {
+    const handleDeviceOrientation = (event: DeviceOrientationEvent) => {
+      if (!mapRef.current) return;
+
+      const { alpha } = event; // Alpha is the compass direction (0 to 360 degrees)
+      if (alpha !== null) {
+        mapRef.current.setHeading(360 - alpha); // Rotate map heading based on orientation
+      }
+    };
+
+    if (window.DeviceOrientationEvent) {
+      window.addEventListener('deviceorientation', handleDeviceOrientation);
+    }
+
+    return () => {
+      window.removeEventListener('deviceorientation', handleDeviceOrientation);
+    };
+  }, []);
+
+  const handleMapLoad = (map: google.maps.Map) => {
+    mapRef.current = map;
+    map.setOptions({
+      center: { lat: 37.7893719, lng: -122.3942 },
+      zoom: 16,
+      heading: 0,
+      tilt: 45,
+      mapId: '90f87356969d889c',
+    });
+  };
+
 
   function MapControls() {
     const map = useMap();
@@ -36,34 +69,70 @@ function App() {
       <APIProvider apiKey={'AIzaSyAU_XhSbMMas1jeY3kF_xuttKnIf1v7P_U'}>
         <h2>Route from Hunt Library to Engineering Building II</h2>
   
-        {/* Fake Directions Steps Section */}
-        <div style={{ padding: '10px', backgroundColor: '#f9f9f9', border: '1px solid #ddd' }}>
-          <h3>Directions Steps (Example)</h3>
-          <ol>
-            <li>Head north on Founders Dr toward Varsity Dr.</li>
-            <li>Turn right onto Varsity Dr.</li>
-            <li>At the traffic circle, take the 2nd exit onto Partners Way.</li>
-            <li>Engineering Building II will be on your left.</li>
-          </ol>
-        </div>
-  
         <div style={{ flex: 1, position: 'relative' }}>
           <Map
             defaultZoom={18}
             fullscreenControl={false}
             options={{
               mapId: '36eeed8517e55638',
+              tilt: 47.5
             }}
           >
             <Directions />
             <UserLocationMarker />
           </Map>
+  
+          {/* Single Instruction UI */}
+          <div
+            style={{
+              position: 'absolute',
+              top: '10px',
+              left: '10px',
+              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              padding: '15px',
+              borderRadius: '8px',
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+              maxWidth: '300px',
+              zIndex: 10,
+            }}
+          >
+            <h3 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 'bold' }}>
+              ⬆️ Head north on Founders Dr
+            </h3>
+            <p style={{ margin: '5px 0 0', fontSize: '0.85rem', color: '#555' }}>
+              (then turn left onto Varsity Dr)
+            </p>
+          </div>
+  
+          {/* Time and ETA Overlay */}
+          <div
+            style={{
+              position: 'absolute',
+              bottom: '10px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              backgroundColor: '#007bff',
+              color: '#ffffff',
+              padding: '8px 15px',
+              borderRadius: '20px',
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.15)',
+              display: 'flex',
+              alignItems: 'center',
+              zIndex: 10,
+            }}
+          >
+            <span style={{ marginRight: '8px', fontWeight: 'bold' }}>🚗 5 min</span>
+            <span>1.2 miles left</span>
+          </div>
         </div>
   
         <MapControls />
       </APIProvider>
     </div>
   );
+  
+  
+  
   
 }
 
@@ -88,8 +157,8 @@ function Directions() {
       if (!directionsService || !directionsRenderer) return;
   
       directionsService.route({
-        origin: "1070 Partners Way, Raleigh, NC 27606",
-        destination: "890 Oval Dr, Raleigh, NC 27606",
+        origin: "890 Oval Dr, Raleigh, NC 27606",
+        destination: "1070 Partners Way, Raleigh, NC 27606",
         travelMode: google.maps.TravelMode.DRIVING,
         provideRouteAlternatives: true,
       }).then((response) => {
