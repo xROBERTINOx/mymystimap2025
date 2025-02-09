@@ -47,8 +47,8 @@ function Directions() {
         if (!directionsService || !directionsRenderer) return;
 
         directionsService.route({
-            origin: "100 Front St, Toronto, ON",
-            destination: "500 College St, Toronto ON",
+            origin: "James B. Hunt Jr. Library, 1070 Partners Way, Raleigh, NC 27606",
+            destination: "Engineering Building II, 890 Oval Dr, Raleigh, NC 27606",
             travelMode: google.maps.TravelMode.DRIVING,
             provideRouteAlternatives: true
         }).then(response => {
