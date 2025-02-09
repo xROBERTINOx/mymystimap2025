@@ -36,6 +36,17 @@ function App() {
       <APIProvider apiKey={'AIzaSyAU_XhSbMMas1jeY3kF_xuttKnIf1v7P_U'}>
         <h2>Route from Hunt Library to Engineering Building II</h2>
   
+        {/* Fake Directions Steps Section */}
+        <div style={{ padding: '10px', backgroundColor: '#f9f9f9', border: '1px solid #ddd' }}>
+          <h3>Directions Steps (Example)</h3>
+          <ol>
+            <li>Head north on Founders Dr toward Varsity Dr.</li>
+            <li>Turn right onto Varsity Dr.</li>
+            <li>At the traffic circle, take the 2nd exit onto Partners Way.</li>
+            <li>Engineering Building II will be on your left.</li>
+          </ol>
+        </div>
+  
         <div style={{ flex: 1, position: 'relative' }}>
           <Map
             defaultZoom={18}
