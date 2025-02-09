@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client';
 import { APIProvider, Map, useMapsLibrary, useMap, AdvancedMarker, Pin } from '@vis.gl/react-google-maps';
 
 function App() {
-
     return (
         <APIProvider apiKey={'AIzaSyAU_XhSbMMas1jeY3kF_xuttKnIf1v7P_U'}>
             <div>
@@ -18,6 +17,7 @@ function App() {
                 }}
             >
                 <Directions />
+                <UserLocationMarker />
             </Map>
         </APIProvider>
     );
@@ -33,42 +33,50 @@ function Directions() {
     const selected = routes[routeIndex];
     const leg = selected?.legs[0];
 
-
     useEffect(() => {
         if (!routesLibrary || !map) return;
         setDirectionsService(new routesLibrary.DirectionsService());
-        setDirectionsRenderer(new routesLibrary.DirectionsRenderer({map}));
-        
-    }, [routesLibrary, map])
+        setDirectionsRenderer(new routesLibrary.DirectionsRenderer({ map }));
+    }, [routesLibrary, map]);
 
-    console.log(directionsService);
-    
     useEffect(() => {
         if (!directionsService || !directionsRenderer) return;
 
         directionsService.route({
-            origin: "James B. Hunt Jr. Library, 1070 Partners Way, Raleigh, NC 27606",
-            destination: "Engineering Building II, 890 Oval Dr, Raleigh, NC 27606",
+            origin: "1070 Partners Way, Raleigh, NC 27606",
+            destination: "890 Oval Dr, Raleigh, NC 27606",
             travelMode: google.maps.TravelMode.DRIVING,
             provideRouteAlternatives: true
         }).then(response => {
             directionsRenderer.setDirections(response);
             setRoutes(response.routes);
-        })
-    }, [directionsService, directionsRenderer])
+        });
+    }, [directionsService, directionsRenderer]);
 
     if (!leg) return null;
 
     return <div>
         <h2>{selected.summary}</h2>
-    </div>
+    </div>;
+}
+
+function UserLocationMarker() {
+    const map = useMap();
+    const [position, setPosition] = useState<google.maps.LatLng | null>(null);
+
+    useEffect(() => {
+        if (!map) return;
+
+        navigator.geolocation.getCurrentPosition((position) => {
+            const { latitude, longitude } = position.coords;
+            setPosition(new google.maps.LatLng(latitude, longitude));
+        });
+    }, [map]);
+
+    if (!position) return null;
+
+    return <AdvancedMarker position={position} map={map} />;
 }
 
 const root = createRoot(document.getElementById('app'));
 root.render(<App />);
-
-
-function customUseEffect(arg0: () => void, arg1: (google.maps.Map | google.maps.RoutesLibrary | null)[]) {
-    throw new Error('Function not implemented.');
-}
-// export default App;
