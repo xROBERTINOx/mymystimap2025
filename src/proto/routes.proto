@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+package google.maps.routing.v2;
+
+// The Routes API service.
+service Routes {
+  // Returns the routes between origins and destinations.
+  rpc ComputeRoutes(ComputeRoutesRequest) returns (ComputeRoutesResponse);
+}
+
+// Request message for Routes.ComputeRoutes.
+message ComputeRoutesRequest {
+  // Required. Origin of the route.
+  RouteLocation origin = 1;
+  
+  // Required. Destination of the route.
+  RouteLocation destination = 2;
+  
+  // Optional. The travel mode to use when computing the route.
+  TravelMode travel_mode = 3;
+  
+  // Optional. Specifies the routing preferences for this request.
+  RoutingPreference routing_preference = 4;
+}
+
+// Location information about a place.
+message RouteLocation {
+  // A point specified by geographic coordinates.
+  LatLng lat_lng = 1;
+}
+
+// A point specified by geographic coordinates.
+message LatLng {
+  // Latitude in degrees.
+  double latitude = 1;
+  
+  // Longitude in degrees.
+  double longitude = 2;
+}
+
+// Response message for Routes.ComputeRoutes
+message ComputeRoutesResponse {
+  // Contains an array of routes.
+  repeated Route routes = 1;
+}
+
+// A route from an origin to a destination.
+message Route {
+  // The encoded polyline representation of the route.
+  Polyline polyline = 1;
+  
+  // The total distance of the route, in meters.
+  int32 distance_meters = 2;
+  
+  // The duration of the route.
+  Duration duration = 3;
+}
+
+// Encoded polyline representation of a route.
+message Polyline {
+  // The encoded polyline string.
+  string encoded_polyline = 1;
+}
+
+// A duration of time.
+message Duration {
+  // Duration in seconds.
+  int64 seconds = 1;
+}
+
+// Travel modes that can be specified.
+enum TravelMode {
+  TRAVEL_MODE_UNSPECIFIED = 0;
+  DRIVE = 1;
+  WALK = 2;
+  BICYCLE = 3;
+}
+
+// Routing preferences that can be specified.
+enum RoutingPreference {
+  ROUTING_PREFERENCE_UNSPECIFIED = 0;
+  TRAFFIC_AWARE = 1;
+  TRAFFIC_AWARE_OPTIMAL = 2;
+}
